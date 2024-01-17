@@ -1,7 +1,9 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class customer(models.Model):
-
+    user = models.OneToOneField(User,null=True,on_delete=models.CASCADE)
+    # CASCADE meaning is whenever the user is deleted then its relation is also deleted in customer
     name = models.CharField(max_length=200,null=True)
     phone = models.CharField(max_length=200,null=True)
     email = models.CharField(max_length=200,null=True)

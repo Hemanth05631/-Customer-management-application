@@ -72,16 +72,24 @@ def home(request):
     context = {'customers':customerss,'orders':orders,'total_orders':total_orders,'Delivered':Delivered,'pending':pending}
     return render(request,'app1/dashboard.html', context)
 
+@allowed_users(allowed_roles=['customer'])
+@login_required(login_url='login')
 def userpage(request):
-    context = {}
+    orders = request.user.customer.order_set.all()
+    total_orders = orders.count()
+    Delivered = orders.filter(status='Delivered').count()
+    pending = orders.filter(status='Pending').count()
+    # print(orders)
+    context = {'orders':orders,'total_orders':total_orders,'Delivered':Delivered,'pending':pending}
     return render(request,'app1/user.html',context)
 
-
+@allowed_users(allowed_roles=['admin'])
 @login_required(login_url='login')
 def products(request):
     products = product.objects.all()
     return render(request,'app1/products.html',{'products':products})
 
+@allowed_users(allowed_roles=['admin'])
 @login_required(login_url='login')
 def customers(request,pk):
     customers = customer.objects.get(id=pk)
