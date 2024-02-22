@@ -2,15 +2,16 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class customer(models.Model):
-    user = models.OneToOneField(User,null=True,on_delete=models.CASCADE)
+    user = models.OneToOneField(User,null=True,blank=True,on_delete=models.CASCADE)
     # CASCADE meaning is whenever the user is deleted then its relation is also deleted in customer
     name = models.CharField(max_length=200,null=True)
     phone = models.CharField(max_length=200,null=True)
     email = models.CharField(max_length=200,null=True)
+    profile_pic = models.ImageField(default='default_image.jpg',null=True,blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.name
+        return self.name if self.name else ' '
 
 class Tag(models.Model):
 
@@ -51,7 +52,7 @@ class order(models.Model):
     status = models.CharField(max_length=200,null=True,choices=STATUS)
 
     def __str__(self):
-        return self.product
+        return str(self.product.name) if self.product else ''
      
     
 

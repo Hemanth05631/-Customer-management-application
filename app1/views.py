@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.forms import inlineformset_factory
 from .models import *
-from .form import OrderForm,CreateUserForm
+from .form import OrderForm,CreateUserForm,CustomerForm
 from django.contrib.auth.models import User
 
 from .filters import OrderFilter
@@ -85,6 +85,20 @@ def userpage(request):
     # print(orders)
     context = {'orders':orders,'total_orders':total_orders,'Delivered':Delivered,'pending':pending}
     return render(request,'app1/user.html',context)
+
+@allowed_users(allowed_roles=['customer'])
+@login_required(login_url='login')
+def accountsettings(request):
+    customer = request.user.customer
+    form = CustomerForm(instance=customer)
+    if request.method == 'POST':
+        form = CustomerForm(request.POST,request.FILES,instance=customer)
+        if form.is_valid():
+            form.save()
+
+    context = {'form':form}
+    return render(request,'app1/account_settings.html',context)
+
 
 @allowed_users(allowed_roles=['admin'])
 @login_required(login_url='login')
